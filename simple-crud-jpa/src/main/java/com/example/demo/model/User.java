@@ -28,5 +28,11 @@ public class User {
     @Column(nullable = false, unique = true)
     private String email;
 
+    @Column
+    private String city;
+
+    @Column
+    private Timestamp birthdate;
+
 
 }
