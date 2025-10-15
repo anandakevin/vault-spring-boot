@@ -16,3 +16,6 @@ jobs:
     uses: ./.github/workflows/_build-subdir.yml
     with:
       subdir: simple-crud-logging-gateway
+    secrets:
+      DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+      DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
