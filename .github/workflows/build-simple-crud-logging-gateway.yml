@@ -1,4 +1,4 @@
-name: Build and Test Maven Project with Docker to DockerHub
+name: Build and Push Docker-based Maven Project (simple-crud-logging-gateway) to DockerHub
 
 on:
   push:
