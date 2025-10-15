@@ -1,0 +1,12 @@
+server:
+  port: 8081
+spring:
+  cloud:
+    gateway:
+      routes:
+        - id: httpbin-forward
+          uri: https://httpbin.org
+          predicates:
+            - Path=/bin/**
+          filters:
+            - StripPrefix=1

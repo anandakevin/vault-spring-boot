@@ -1,0 +1,12 @@
+server:
+  port: 8082
+spring:
+  cloud:
+    gateway:
+      routes:
+        - id: httpbin-rewrite-anything
+          uri: https://httpbin.org
+          predicates:
+            - Path=/api/bin/**
+          filters:
+            - RewritePath=/api/bin/(?<seg>.*), /anything/${seg}
