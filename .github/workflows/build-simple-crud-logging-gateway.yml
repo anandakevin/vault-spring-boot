@@ -1,4 +1,4 @@
-name: Build and Push Docker-based Maven Project (simple-crud-logging-gateway) to DockerHub
+name: Build & Push (simple-crud-logging-gateway)
 
 on:
   push:
@@ -12,33 +12,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Set up JDK 17
-        uses: actions/setup-java@v4
-        with:
-          distribution: temurin
-          java-version: "17"
-          cache: maven
-
-      - name: Validate Maven project
-        working-directory: simple-crud-logging-gateway
-        run: mvn -B -q clean verify -DskipTests=true
-
-      - name: Log in to Docker Hub
-        uses: docker/login-action@v3
-        with:
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
-
-      - name: Build and push via root Makefile
-        env:
-          REGISTRY: ${{ secrets.DOCKER_USERNAME }}
-          REPOSITORY: ${{ github.event.repository.name }}-simple-crud-logging-gateway
-          IMAGE_TAG: ${{ github.sha }}
-        run: make docker-build-push-dev
+  call-build:
+    uses: ./.github/workflows/_build-subdir.yml
+    with:
+      subdir: simple-crud-logging-gateway
