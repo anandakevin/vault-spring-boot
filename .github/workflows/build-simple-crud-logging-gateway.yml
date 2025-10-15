@@ -2,13 +2,15 @@ name: Build and Test Maven Project with Docker to DockerHub
 
 on:
   push:
+    branches: [develop]
     paths:
       - "simple-crud-logging-gateway/**"
-      - branches: ["develop"]
+
   pull_request:
+    branches: [develop] # base branch of the PR
     paths:
       - "simple-crud-logging-gateway/**"
-      - branches: ["develop"]
+
   workflow_dispatch:
 
 jobs:
