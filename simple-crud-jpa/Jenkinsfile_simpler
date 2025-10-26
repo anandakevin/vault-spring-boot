@@ -1,0 +1,68 @@
+pipeline {
+    agent any
+
+    environment {
+        DOCKER_IMAGE = "thechief28/vault-spring-boot-simple-crud-jpa-2:latest"
+        PROJECT_DIR = 'simple-crud-jpa'
+        ANSIBLE_DIR = '/home/jenkins/ansible'
+    }
+    
+    stages {
+        
+        stage ('Checkout') {
+            steps {
+                git branch: 'main', url: 'https://github.com/anandakevin/vault-spring-boot.git'
+            }
+        }
+        
+        stage ('Build & Package') {
+            steps {
+                dir ("${PROJECT_DIR}") {
+                    sh 'mvn clean package -DskipTests'
+                }
+            }
+            
+            post {
+                success {
+                    archiveArtifacts artifacts: "${PROJECT_DIR}/target/*.jar", fingerprint: true
+                }
+            }
+        }
+        
+        stage ('Build Docker Image') {
+            steps {
+                dir ("${PROJECT_DIR}") {
+                    sh "docker build -t ${DOCKER_IMAGE} ."
+                }
+            }
+        }
+        
+        stage ('Push Docker Image') {
+            steps {
+                sh '''
+                    docker push ${DOCKER_IMAGE}
+                    docker logout
+                '''
+            }
+        }
+        
+        stage ('Deploy via Ansible') {
+            steps {
+                echo 'Deploying application on target server via Ansible...'
+                sh '''
+                    ansible-playbook -i ${ANSIBLE_DIR}/inventories/inventory.ini ${ANSIBLE_DIR}/playbooks/deploy-simple-crud-jpa.yml \
+                    --extra-vars "image=${DOCKER_IMAGE}"
+                '''
+            }
+        }
+    }
+    
+    post {
+        success {
+            echo 'Application deployed successfully! ✅'
+        }
+        failure {
+            echo 'Deployment failed. Please check the logs. ❌'
+        }
+    }
+}
